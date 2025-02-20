@@ -1,12 +1,15 @@
 using System;
 
+// Represents a component that tracks and emits experience changes.
 public interface IExperienceGainer
 {
+	// Fired when CurrentExperience is changed (useful for UI or other listeners).
 	event Action onCurrentExperienceChanged;
-	event Action<int> onExperienceThresholdReached; // Notifies when XP reaches level-up threshold
 
+	// The current accumulated experience.
 	int CurrentExperience { get; set; }
-	int RequiredExperience { get; } // XP needed for the next level
 
+	// The actual level data is handled by ILevelProgression.
+	// But if you need data references here, you can return them.
 	LevelDataListSO GetLevelDataList();
 }

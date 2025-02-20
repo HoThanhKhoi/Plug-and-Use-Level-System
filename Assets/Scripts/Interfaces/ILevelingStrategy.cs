@@ -1,16 +1,13 @@
 using UnityEngine;
 
-public class ILevelingStrategy : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+// A strategy that calculates required XP for a given level.
+// Different implementations can do manual table lookups, formulas, etc.
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+public interface ILevelingStrategy
+{
+	// Calculates the required experience for the next level.
+	// <param name="levelDataList">A ScriptableObject holding level data (XP thresholds).</param>
+	// <param name="currentLevel">The current level.</param>
+	// <returns>The required XP for the next level.</returns>
+	int CalculateRequiredExperience(LevelDataListSO levelDataList, int currentLevel);
 }

@@ -1,16 +1,17 @@
 using UnityEngine;
 
-public class FormulaLevelingStrategy : MonoBehaviour
+[CreateAssetMenu(fileName = "FormulaStrategy", menuName = "Leveling/Strategies/Formula")]
+public class FormulaLevelingStrategySO : LevelingStrategySO
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+	[SerializeField]
+	private AnimationCurve xpCurve = new AnimationCurve(
+	new Keyframe(1, 100),
+	new Keyframe(50, 10000)
+	);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	public override int CalculateRequiredExperience(LevelDataListSO dataList, int currentLevel)
+	{
+		return Mathf.RoundToInt(xpCurve.Evaluate(currentLevel));
+	}
+
 }

@@ -1,13 +1,22 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class LevelingService : MonoBehaviour
+// A concrete facade that implements ILevelingFacade, acting as the single "door" for
+// registering, looking up, and updating leveling systems at runtime.
+// Optionally references LevelingRegistrySO for persistent or cross-scene storage.
+public class LevelingService : MonoBehaviour, ILevelingFacade
 {
 	public static LevelingService Instance { get; private set; }
 
+	[Header("Optional Registry")]
 	[SerializeField] private LevelingRegistrySO levelingRegistry;
-	private Dictionary<LevelingCategory, IExperienceGainer> experienceGainers = new();
-	private Dictionary<LevelingCategory, ILevelProgression> levelProgressions = new();
+
+	// Runtime dictionaries for quick lookups
+	private Dictionary<LevelingCategory, IExperienceGainer> experienceGainers
+		= new Dictionary<LevelingCategory, IExperienceGainer>();
+
+	private Dictionary<LevelingCategory, ILevelProgression> levelProgressions
+		= new Dictionary<LevelingCategory, ILevelProgression>();
 
 	private void Awake()
 	{
@@ -16,54 +25,34 @@ public class LevelingService : MonoBehaviour
 			Destroy(gameObject);
 			return;
 		}
-
 		Instance = this;
 		DontDestroyOnLoad(gameObject);
 
-		EnsureRegistryExists();
+		// If you want to auto-search for a registry:
+		if (!levelingRegistry)
+		{
+			levelingRegistry = FindObjectOfType<LevelingRegistrySO>();
+		}
 	}
 
 
-	private void EnsureRegistryExists()
+
+	public void ResetSystem(LevelingCategory category)
 	{
-		if (levelingRegistry == null)
+		if (experienceGainers.TryGetValue(category, out var xpGainer))
 		{
-			levelingRegistry = FindAnyObjectByType<LevelingRegistrySO>(); // Auto-search for registry
+			(xpGainer as ExperienceTracker)?.ResetExperience();
 		}
 
-		if (levelingRegistry == null)
+		if (levelProgressions.TryGetValue(category, out var prog))
 		{
-			Debug.LogWarning("LevelingService: No LevelingRegistrySO found! If using a GameManager, ensure it assigns one.");
-			return;
-		}
-		else
-		{
-			Debug.Log("LevelingService: Leveling Registry found successfully.");
+			(prog as LevelTracker)?.ResetLevel();
 		}
 	}
 
-	// Allows GameManager to explicitly assign the registry
-	public void SetRegistry(LevelingRegistrySO registry)
-	{
-		if (registry == null)
-		{
-			Debug.LogError("LevelingService: Received null registry!");
-			return;
-		}
+	#region ILevelingFacade Implementation
 
-		levelingRegistry = registry;
-		Debug.Log("LevelingService: Leveling Registry manually assigned.");
-	}
-
-	public bool TryGetLevelingSystem(LevelingCategory category, out IExperienceGainer xpGainer, out ILevelProgression levelProgress)
-	{
-		xpGainer = null;
-		levelProgress = null;
-		return experienceGainers.TryGetValue(category, out xpGainer) &&
-			   levelProgressions.TryGetValue(category, out levelProgress);
-	}
-
-	public void RegisterLevelingSystem(LevelingCategory category, IExperienceGainer xpGainer, ILevelProgression levelProgression)
+	public void RegisterLevelingSystem(LevelingCategory category, IExperienceGainer xpGainer, ILevelProgression progression)
 	{
 		if (experienceGainers.ContainsKey(category))
 		{
@@ -72,46 +61,72 @@ public class LevelingService : MonoBehaviour
 		}
 
 		experienceGainers[category] = xpGainer;
-		levelProgressions[category] = levelProgression;
+		levelProgressions[category] = progression;
+
+		// Also store in the registry if assigned
+		if (levelingRegistry)
+		{
+			levelingRegistry.Register(category, xpGainer, progression);
+		}
 
 		Debug.Log($"Registered leveling system for {category}.");
-
-		// Ensure LevelingRegistrySO also stores this system reference
-		if (levelingRegistry != null)
-		{
-			levelingRegistry.Register(category, xpGainer, levelProgression);
-		}
-		else
-		{
-			Debug.LogWarning("LevelingRegistrySO is missing! Make sure it is assigned.");
-		}
 	}
-
 
 	public void UnregisterLevelingSystem(LevelingCategory category)
 	{
-		if (experienceGainers.ContainsKey(category))
+		experienceGainers.Remove(category);
+		levelProgressions.Remove(category);
+
+		if (levelingRegistry)
 		{
-			experienceGainers.Remove(category);
-			levelProgressions.Remove(category);
-			Debug.Log($"Unregistered leveling system for {category}.");
+			levelingRegistry.Unregister(category);
 		}
+
+		Debug.Log($"Unregistered leveling system for {category}.");
 	}
 
 	public IExperienceGainer GetExperienceGainer(LevelingCategory category)
 	{
-		if (levelingRegistry == null) EnsureRegistryExists();
-		return experienceGainers.TryGetValue(category, out var xpGainer) ? xpGainer : null;
+		experienceGainers.TryGetValue(category, out var xp);
+		return xp;
 	}
 
 	public ILevelProgression GetLevelProgression(LevelingCategory category)
 	{
-		if (levelingRegistry == null) EnsureRegistryExists();
-		return levelProgressions.TryGetValue(category, out var levelProgress) ? levelProgress : null;
+		levelProgressions.TryGetValue(category, out var prog);
+		return prog;
 	}
 
-	public bool HasRegistry()
+	// Adds XP to the specified category, checks if threshold is reached, and triggers a level-up if so.
+	public void AddExperience(LevelingCategory category, int amount)
 	{
-		return levelingRegistry != null;
+		if (!experienceGainers.TryGetValue(category, out var xpGainer) ||
+			!levelProgressions.TryGetValue(category, out var progression))
+		{
+			Debug.LogWarning($"No leveling system found for {category} when adding XP.");
+			return;
+		}
+
+		// Increase XP
+		xpGainer.CurrentExperience += amount;
+		Debug.Log($"Added {amount} XP to {category}. Current XP: {xpGainer.CurrentExperience}");
+
+		// Check thresholds
+		var levelingProg = progression as LevelTracker;
+		if (levelingProg == null)
+		{
+			Debug.LogWarning($"Level progression for {category} is not a LevelingProgression component.");
+			return;
+		}
+
+		// While XP is sufficient to level up, keep leveling
+		while (xpGainer.CurrentExperience >= levelingProg.RequiredExperience &&
+			   levelingProg.CanLevelUp())
+		{
+			xpGainer.CurrentExperience -= levelingProg.RequiredExperience;
+			levelingProg.PerformLevelUp();
+		}
 	}
+
+	#endregion
 }
