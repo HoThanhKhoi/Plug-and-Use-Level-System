@@ -14,15 +14,14 @@ public class LevelingProgression : MonoBehaviour, ILevelProgression
 	{
 		experienceGainer = GetComponent<IExperienceGainer>();
 
-		// Fetch LevelDataListSO from the XP Component
-		if (experienceGainer is ManualLevelingComponent manualLeveling)
-		{
-			levelDataList = manualLeveling.RequiredExpTable;
-		}
-
 		if (experienceGainer != null)
 		{
+			levelDataList = experienceGainer?.GetLevelDataList();
 			experienceGainer.onExperienceThresholdReached += HandleLevelUp;
+		}
+		else
+		{
+			Debug.LogError($"No IExperienceGainer found on GameObject {gameObject.name}!");
 		}
 	}
 

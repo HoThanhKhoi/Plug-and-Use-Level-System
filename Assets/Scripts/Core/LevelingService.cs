@@ -5,7 +5,7 @@ public class LevelingService : MonoBehaviour
 {
 	public static LevelingService Instance { get; private set; }
 
-	private LevelingRegistrySO levelingRegistry;
+	[SerializeField] private LevelingRegistrySO levelingRegistry;
 	private Dictionary<LevelingCategory, IExperienceGainer> experienceGainers = new();
 	private Dictionary<LevelingCategory, ILevelProgression> levelProgressions = new();
 
@@ -20,9 +20,9 @@ public class LevelingService : MonoBehaviour
 		Instance = this;
 		DontDestroyOnLoad(gameObject);
 
-		// Automatically find the registry, but allow manual override
-		Invoke(nameof(EnsureRegistryExists), 0.1f);
+		EnsureRegistryExists();
 	}
+
 
 	private void EnsureRegistryExists()
 	{
@@ -34,6 +34,7 @@ public class LevelingService : MonoBehaviour
 		if (levelingRegistry == null)
 		{
 			Debug.LogWarning("LevelingService: No LevelingRegistrySO found! If using a GameManager, ensure it assigns one.");
+			return;
 		}
 		else
 		{
@@ -62,18 +63,30 @@ public class LevelingService : MonoBehaviour
 			   levelProgressions.TryGetValue(category, out levelProgress);
 	}
 
-	public void RegisterLevelingSystem(LevelingCategory category, IExperienceGainer xpGainer, ILevelProgression levelProgress)
+	public void RegisterLevelingSystem(LevelingCategory category, IExperienceGainer xpGainer, ILevelProgression levelProgression)
 	{
 		if (experienceGainers.ContainsKey(category))
 		{
-			Debug.LogWarning($"Leveling system with key {category} is already registered.");
+			Debug.LogWarning($"Leveling system for {category} is already registered.");
 			return;
 		}
 
 		experienceGainers[category] = xpGainer;
-		levelProgressions[category] = levelProgress;
+		levelProgressions[category] = levelProgression;
+
 		Debug.Log($"Registered leveling system for {category}.");
+
+		// Ensure LevelingRegistrySO also stores this system reference
+		if (levelingRegistry != null)
+		{
+			levelingRegistry.Register(category, xpGainer, levelProgression);
+		}
+		else
+		{
+			Debug.LogWarning("LevelingRegistrySO is missing! Make sure it is assigned.");
+		}
 	}
+
 
 	public void UnregisterLevelingSystem(LevelingCategory category)
 	{
@@ -95,5 +108,10 @@ public class LevelingService : MonoBehaviour
 	{
 		if (levelingRegistry == null) EnsureRegistryExists();
 		return levelProgressions.TryGetValue(category, out var levelProgress) ? levelProgress : null;
+	}
+
+	public bool HasRegistry()
+	{
+		return levelingRegistry != null;
 	}
 }

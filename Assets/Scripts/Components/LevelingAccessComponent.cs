@@ -24,7 +24,7 @@ public class LevelingAccessComponent : MonoBehaviour
 			}
 
 			retries--;
-			yield return new WaitForSeconds(0.2f); // Wait before retrying
+			yield return new WaitForSeconds(0.1f); // Wait before retrying
 		}
 
 		Debug.LogError($"No leveling system found for {LevelingCategory.Player}!");

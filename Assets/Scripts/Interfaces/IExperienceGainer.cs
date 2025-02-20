@@ -7,4 +7,6 @@ public interface IExperienceGainer
 
 	int CurrentExperience { get; set; }
 	int RequiredExperience { get; } // XP needed for the next level
+
+	LevelDataListSO GetLevelDataList();
 }

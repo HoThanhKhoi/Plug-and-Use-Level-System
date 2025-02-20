@@ -6,10 +6,12 @@ public class GameManager : MonoBehaviour
 
 	private void Awake()
 	{
-		if (levelingRegistry != null)
+		Debug.Log("GameManager: Assigning Leveling Registry to LevelingService.");
+
+		if (LevelingService.Instance.HasRegistry() == false) // Check if registry is missing
 		{
-			Debug.Log("GameManager: Assigning Leveling Registry to LevelingService.");
 			LevelingService.Instance.SetRegistry(levelingRegistry);
+			Debug.Log("GameManager: Leveling Registry manually assigned.");
 		}
 	}
 }

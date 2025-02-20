@@ -15,6 +15,11 @@ public class ManualLevelingComponent : MonoBehaviour, IExperienceGainer
 #endif
 	}
 
+	public LevelDataListSO GetLevelDataList()
+	{
+		return requiredExpTable;
+	}
+
 	public int CurrentExperience
 	{
 		get => currentExp;
