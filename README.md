@@ -33,7 +33,9 @@ _Optional UI_
 **4. Common Use Cases**
 
 Player Leveling: Single “Player” category. You add XP from kills, quests, etc. The system auto‐increments level.
+
 Weapon or Skill Leveling: Create new categories (LevelingCategory.Weapon, LevelingCategory.Skill). Attach separate trackers to your weapon or skill object.
+
 Multiple Enemies: Either give each enemy a unique category (not typical) or skip the facade dictionary for them, referencing local LevelTracker directly. The system can still manage XP thresholds, but you must be mindful of collisions if you rely on Enemy as a single category.
 
 **5. What It Can & Can’t Do**
