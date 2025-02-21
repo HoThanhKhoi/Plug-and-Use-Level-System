@@ -60,12 +60,15 @@ _Limitations:_
 **7. Installation & Import**
 
 Unity Version: Tested with Unity 2020+
+
 Import: Drag the /Scripts folder into your project or use a Unity package.
+
 Setup: Add a “LevelingService” object, attach the script, assign the references.
 
 **8. Support & Contributing**
 
 Issues: If you find a bug, open an issue in our repository or contact me.
-Contributions: For new features (like a different leveling strategy or advanced UI), add a script under /Strategies or /LevelUI and reference it in your scene.
 
+Contributions: For new features (like a different leveling strategy or advanced UI), add a script under /Strategies or /LevelUI and reference it in your scene.
+__________________________________________
 Detail Technical Document: https://docs.google.com/document/d/1Ezu26UQw5JQU_eKvP1Te2nZF7F37heSV0MV9-Y618v4/edit?usp=sharing
