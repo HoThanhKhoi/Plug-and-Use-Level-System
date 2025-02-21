@@ -2,7 +2,9 @@ using System;
 using UnityEngine;
 
 // Tracks experience points. Does not handle leveling logic directly.
-public class ExperienceTracker : MonoBehaviour, IExperienceGainer
+
+[DefaultExecutionOrder(-40)]
+public class ExperienceTracker : MonoBehaviour, IExperienceTracker
 {
 	[SerializeField] private LevelingCategory systemCategory;
 	[SerializeField] private int currentExp;
@@ -19,10 +21,10 @@ public class ExperienceTracker : MonoBehaviour, IExperienceGainer
 		}
 	}
 
-	private void Start()
+	private void Awake()
 	{
 		// Find the progression on the same GameObject
-		var progression = GetComponent<ILevelProgression>();
+		var progression = GetComponent<ILevelTracker>();
 		if (progression == null)
 		{
 			Debug.LogError("ManualLevelingComponent: No ILevelProgression component found on this GameObject!");

@@ -4,16 +4,16 @@
 public interface ILevelingFacade
 {
 	// Registers a leveling system for a given category.
-	void RegisterLevelingSystem(LevelingCategory category, IExperienceGainer xpGainer, ILevelProgression levelProgression);
+	void RegisterLevelingSystem(LevelingCategory category, IExperienceTracker xpGainer, ILevelTracker levelProgression);
 
 	// Unregisters a leveling system for the given category.
 	void UnregisterLevelingSystem(LevelingCategory category);
 
 	// Retrieves the IExperienceGainer for the given category, if registered.
-	IExperienceGainer GetExperienceGainer(LevelingCategory category);
+	IExperienceTracker GetExperienceGainer(LevelingCategory category);
 
 	// Retrieves the ILevelProgression for the given category, if registered.
-	ILevelProgression GetLevelProgression(LevelingCategory category);
+	ILevelTracker GetLevelProgression(LevelingCategory category);
 
 	// Adds experience to the system for the specified category,
 	// potentially triggering a level-up if thresholds are met.

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b183570c73b63c44b6f4aa36936f7d5, type: 3}
-  m_Name: FormulaStrategySO
+  m_Name: FormulaLevelingStrategySO
   m_EditorClassIdentifier: 
   xpCurve:
     serializedVersion: 2

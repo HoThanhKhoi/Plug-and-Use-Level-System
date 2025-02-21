@@ -8,13 +8,13 @@ using UnityEngine;
 public class LevelingRegistrySO : ScriptableObject
 {
 	// Example dictionaries if you want to store references in a ScriptableObject.
-	private Dictionary<LevelingCategory, IExperienceGainer> xpGainers
-		= new Dictionary<LevelingCategory, IExperienceGainer>();
+	private Dictionary<LevelingCategory, IExperienceTracker> xpGainers
+		= new Dictionary<LevelingCategory, IExperienceTracker>();
 
-	private Dictionary<LevelingCategory, ILevelProgression> levelProgressions
-		= new Dictionary<LevelingCategory, ILevelProgression>();
+	private Dictionary<LevelingCategory, ILevelTracker> levelProgressions
+		= new Dictionary<LevelingCategory, ILevelTracker>();
 
-	public void Register(LevelingCategory category, IExperienceGainer xp, ILevelProgression progression)
+	public void Register(LevelingCategory category, IExperienceTracker xp, ILevelTracker progression)
 	{
 		if (xpGainers.ContainsKey(category))
 		{
@@ -28,13 +28,13 @@ public class LevelingRegistrySO : ScriptableObject
 		Debug.Log($"Leveling system for {category} stored in LevelingRegistrySO.");
 	}
 
-	public IExperienceGainer GetExperienceGainer(LevelingCategory category)
+	public IExperienceTracker GetExperienceGainer(LevelingCategory category)
 	{
 		xpGainers.TryGetValue(category, out var xp);
 		return xp;
 	}
 
-	public ILevelProgression GetLevelProgression(LevelingCategory category)
+	public ILevelTracker GetLevelProgression(LevelingCategory category)
 	{
 		levelProgressions.TryGetValue(category, out var prog);
 		return prog;

@@ -1,7 +1,7 @@
 using System;
 
 // Represents a component that tracks and emits experience changes.
-public interface IExperienceGainer
+public interface IExperienceTracker
 {
 	// Fired when CurrentExperience is changed (useful for UI or other listeners).
 	event Action onCurrentExperienceChanged;

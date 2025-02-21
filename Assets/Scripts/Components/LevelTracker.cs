@@ -3,10 +3,14 @@ using UnityEngine;
 
 // Manages current level, references a leveling table (LevelDataListSO),
 // and uses a leveling strategy (ManualLevelingStrategy) to compute required XP.
-public class LevelTracker : MonoBehaviour, ILevelProgression
+
+[DefaultExecutionOrder(-40)]
+public class LevelTracker : MonoBehaviour, ILevelTracker
 {
 	[SerializeField] private int currentLevel = 1;
 	[SerializeField] private LevelDataListSO levelDataList;
+	public LevelDataListSO LevelDataList => levelDataList;
+
 	[Header("Optional: Raise an SO event on level up")]
 	[SerializeField] private LevelUpEventSO levelUpEvent;
 

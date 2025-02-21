@@ -1,7 +1,7 @@
 using System;
 
 // Represents a component that manages level progression (current level, etc.).
-public interface ILevelProgression
+public interface ILevelTracker
 {
 	// Fired when the level changes (e.g., after leveling up).
 	event Action onLevelChanged;

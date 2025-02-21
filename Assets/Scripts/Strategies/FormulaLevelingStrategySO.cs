@@ -5,8 +5,8 @@ public class FormulaLevelingStrategySO : LevelingStrategySO
 {
 	[SerializeField]
 	private AnimationCurve xpCurve = new AnimationCurve(
-	new Keyframe(1, 100),
-	new Keyframe(50, 10000)
+	new Keyframe(1, 1000),
+	new Keyframe(50, 100000)
 	);
 
 	public override int CalculateRequiredExperience(LevelDataListSO dataList, int currentLevel)
