@@ -65,3 +65,5 @@ Setup: Add a “LevelingService” object, attach the script, assign the referen
 
 Issues: If you find a bug, open an issue in our repository or contact me.
 Contributions: For new features (like a different leveling strategy or advanced UI), add a script under /Strategies or /LevelUI and reference it in your scene.
+
+Detail Technical Document: https://docs.google.com/document/d/1Ezu26UQw5JQU_eKvP1Te2nZF7F37heSV0MV9-Y618v4/edit?usp=sharing
