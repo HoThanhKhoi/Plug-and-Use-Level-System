@@ -33,7 +33,9 @@ _Optional UI_
 **4. Common Use Cases**
 
 Player Leveling: Single “Player” category. You add XP from kills, quests, etc. The system auto‐increments level.
+
 Weapon or Skill Leveling: Create new categories (LevelingCategory.Weapon, LevelingCategory.Skill). Attach separate trackers to your weapon or skill object.
+
 Multiple Enemies: Either give each enemy a unique category (not typical) or skip the facade dictionary for them, referencing local LevelTracker directly. The system can still manage XP thresholds, but you must be mindful of collisions if you rely on Enemy as a single category.
 
 **5. What It Can & Can’t Do**
@@ -58,10 +60,15 @@ _Limitations:_
 **7. Installation & Import**
 
 Unity Version: Tested with Unity 2020+
+
 Import: Drag the /Scripts folder into your project or use a Unity package.
+
 Setup: Add a “LevelingService” object, attach the script, assign the references.
 
 **8. Support & Contributing**
 
 Issues: If you find a bug, open an issue in our repository or contact me.
+
 Contributions: For new features (like a different leveling strategy or advanced UI), add a script under /Strategies or /LevelUI and reference it in your scene.
+__________________________________________
+Detail Technical Document: https://docs.google.com/document/d/1Ezu26UQw5JQU_eKvP1Te2nZF7F37heSV0MV9-Y618v4/edit?usp=sharing
